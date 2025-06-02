@@ -1,3 +1,4 @@
+use clap::{Arg, Command};
 use image::io::Reader as ImageReader;
 use std::fs::{self, create_dir_all};
 use std::path::{Path, PathBuf};
@@ -5,8 +6,20 @@ use walkdir::WalkDir;
 use webp::{Encoder, WebPMemory};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Input folder path (modify this or use command-line args)
-    let input_folder = "images"; // Replace with your input folder path
+    // Define CLI arguments
+    let matches = Command::new("image-to-webp")
+        .version("1.0")
+        .about("Converts images in a folder to WebP format")
+        .arg(
+            Arg::new("folder")
+                .help("Path to the folder containing images")
+                .required(true)
+                .index(1),
+        )
+        .get_matches();
+
+    // Get the input folder from CLI argument
+    let input_folder = matches.get_one::<String>("folder").unwrap();
     let output_folder = Path::new(input_folder).join("webp");
 
     // Create the output webp folder if it doesn't exist
